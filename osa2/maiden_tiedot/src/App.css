@@ -1,0 +1,22 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: left;
+}
+
+.filter-container {
+  position: fixed;
+  top: 2rem;
+  left: 15rem;
+  right: 2rem;
+  background-color: rgb(192, 199, 193);
+  padding: 1rem 0;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+}
+
+.countries-wrapper {
+  margin-top: 80px;
+}
