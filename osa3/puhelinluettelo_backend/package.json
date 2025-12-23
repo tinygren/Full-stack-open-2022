@@ -1,0 +1,19 @@
+{
+  "name": "puhelinluettelo",
+  "version": "1.0.0",
+  "description": "puhelinluettelon backend harjoitustehtävä",
+  "license": "ISC",
+  "author": "Timo Nygren",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.2.1",
+    "morgan": "^1.10.1"
+  }
+}
