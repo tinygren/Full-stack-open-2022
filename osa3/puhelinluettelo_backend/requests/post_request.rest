@@ -1,7 +1,7 @@
-POST http://localhost:3001/api/persons
+POST http://localhost:3001/api/people
 Content-Type: application/json
 
 {
-  "name": "Aarno Pekkanen",
-  "number": "040-1234321"
+  "name": "Lti",
+  "number": "040-11221321"
 }

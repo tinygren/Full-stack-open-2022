@@ -1,128 +1,134 @@
 
-// 1. Tuodaan tarvittavat paketit
+
+//Ladataan ympäristömuuttujat käyttöön heti index.js-tiedoston alussa, jolloin ne tulevat käyttöön koko sovellukselle
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
-const cors = require('cors') 
-const app = express()
+//path moduuli tiedostopolkujen käsittelyyn
+const path = require('path')
+// On tärkeää, että dotenv otetaan käyttöön ennen modelin person importtaamista
+const Person = require('./models/person')
 
-app.use(cors())
+const app = express()
+//TÄTÄ ei enään tarvita ,jos frontendissä on Proxy määriteltynä vite.config.js tiedostossa.
+// Poistetaan siis viittaukset cors-kirjastoon backendin index.js-tiedostosta, ja poistetaan cors projektin riippuvuuksista:
+// npm remove cors
+// // Otetaan käyttöön CORS .
+// if (process.env.NODE_ENV !== 'production') {
+//   const cors = require('cors')
+//   app.use(cors())
+// }
+
 // Otetaan käyttöön JSON-muotoisen datan käsittely
 app.use(express.json())
 
 // Luo oma Morgan-token:
-morgan.token('body', (req, res) => { 
-  return JSON.stringify(req.body) 
+morgan.token('body', (request) => {
+  return JSON.stringify(request.body)
 })
-// Käytetään Morgania:
-// app.use(morgan('tiny')); // tavallinen
-// app.use(morgan(':method :url :status :response-time ms :body', {
-//   skip: (req) => req.method !== 'POST'
-// }));
+// Käytetään Morganin middlewarea, joka loggaa HTTP-pyynnöt konsoliin
 
-app.use(
-  morgan(':method :url :status :res[content-length] - :response-time ms :body')
-);
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
-// 2. Luodaan alustava data
-let persons = [
-  {
-    id: "1",
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: "2",    
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-    {       
-    id: "3",    
-    name: "Dan Abramov",
-    number: "12-43-234345", 
-    },
-    {       
-    id: "4",    
-    name: "Mary Poppendieck",
-    number: "39-23-6423122", 
-    },  
-    {
-    id: "5",
-    name: "Timo Timo",
-    number: "050-1234567",
-  },
-  {
-    id: "6",
-    name: "Matti Meikäläinen",
-    number: "050-7654321",
-  },
-  {
-    id: "7",
-    name: "Teppo Testaaja",
-    number: "040-9876543",
-  }
-  
-]
 // 3. Esimerkki reitistä
 app.get('/', (req, res) => {
-  res.send('Greetings from backend!');
-});
-
-app.get('/api/persons', (request, response) => {
-  response.json(persons)
+  res.send('Greetings from backend!')
 })
 
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/people', (request, response, next) => {
+  Person.find({})
+    .then(people => {
+      response.json(people)
+    })
+    .catch(error => next(error))
+})
+
+app.get('/api/people/:id', (request, response, next) => {
   const id = request.params.id
-  const person = persons.find(person => person.id === id)
-  if (person) {
-    response.json(person)
-  } else {
-    response.status(404).end()
-  }
+  Person.findById(id).then(person => {
+    if (person) {
+      response.json(person)
+    } else {
+      response.status(404).end()
+    }
+  })
+    .catch(error => next(error))
 })
 
-app.get('/info', (request, response) => {
+app.get('/info', (request, response, next) => {
   const date = new Date()
-  response.send(`<p>Phonebook has info for ${persons.length} people</p><p>${date}</p>`)
+  Person.countDocuments({})
+    .then(count => {
+      response.send(`<p>Phonebook has info for ${count} people</p><p>${date}</p>`)
+    })
+    .catch(error => next(error))
 })
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/people/:id', (request, response, next) => {
   const id = request.params.id
-  persons = persons.filter(person => person.id !== id)
-  response.status(204).end()
+  Person.findByIdAndDelete(id)
+    .then(() => {
+      response.status(204).end()
+    })
+    .catch(error => next(error))
 })
 
-function getRandomInt(min, max) {
-  const minCeiled = Math.ceil(min);
-  const maxFloored = Math.floor(max);
-  return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled); 
-  // The maximum is exclusive and the minimum is inclusive
-}
-
-app.post('/api/persons', (request, response) => {
+app.post('/api/people', (request, response, next) => {
   const body = request.body
 
   if (!body.name) {
-      return response.status(400).json({ error: 'name missing' })
+    return response.status(400).json({ error: 'name missing' })
   }
   if (!body.number) {
     return response.status(400).json({ error: 'number missing' })
   }
+  const person = new Person({
+    name: body.name,                        // id: getRandomInt(100, 1000).toString(),
+    number: body.number
+  })
+  person.save().then(savedPerson =>
+    response.json(savedPerson))
+    .catch(error => next(error))           // ⬅️ TÄRKEÄ
+})
 
-  if (persons.find(person => person.name === body.name)) {
-    return response.status(400).json({ error: 'name must be unique' })
+app.put('/api/people/:id', (request, response, next) => {
+  const { name, number } = request.body
+  Person.findById(request.params.id)
+    .then(person => {
+      if (!person) {
+        return response.status(404).end()
+      }
+      person.name = name       //päivitetään muistiinpanon tiedot
+      person.number = number
+
+      return person.save().then((updatedPerson) => {   //tallennetaan päivitetty muistiinpano tietokantaan
+        response.json(updatedPerson)
+      })
+    })
+    .catch(error => next(error))       // ⬅️ TÄRKEÄ
+})
+app.get(/.*/, (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'), err => {
+    if (err) {
+      res.status(500).send(err)
+    }
+  })
+})
+// Error handling middleware
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+// olemattomien osoitteiden käsittely
+app.use(unknownEndpoint)
+
+// Virheidenkäsittelymiddleware
+app.use((error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).json({ error: 'malformatted id' })
   }
-
-  const person = {
-    id: getRandomInt(100, 1000).toString(),
-    name: body.name,
-    number: body.number    
-  }
-
-  persons = persons.concat(person)
-  // moderni tapa tehdä sama : persons = [...persons, person]
-
-  response.status(201).json(person)
+  next(error)
 })
 
 const PORT = process.env.PORT || 3001
