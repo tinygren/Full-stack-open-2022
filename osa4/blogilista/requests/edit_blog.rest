@@ -1,0 +1,14 @@
+PUT http://localhost:3003/api/blogs/6967a9d536c8dc0c5e0f3c83
+Content-Type: application/json
+
+{
+  "likes": 112
+}
+
+
+# {
+#   "title": "My second blog",
+#   "author": "Timo Tupperi",
+#   "url": "www.timo.fi",
+#   "likes": 111
+# }

@@ -1,0 +1,11 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY5OGFmMjg0ZmNlNmEyM2JlZmFkOTJiOSIsImlhdCI6MTc3MDgwMjcyOCwiZXhwIjoxNzcwODA5OTI4fQ.VgbJNIIARnqJamDWNDB3vLQMnBGUM8JJmrDDugJk0X4
+
+{
+  "title": "Keskiviikko 4.22: Blogilomake",
+  "author": "Matti Luukkainen",
+  "url": "www.google.com",
+  "likes": 1000
+   
+}
