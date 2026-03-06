@@ -147,6 +147,7 @@ const App = () => {
               }, 5000)
             })
             .catch(error => {
+              console.log(error.response.data)
               setErrorMessage(
                 `'Person ${p.name}' Error updating person`
               ) 
@@ -168,16 +169,17 @@ const App = () => {
         setPersons(persons.concat(returnedPerson))
         setNewName('')
         setNewNumber('')
-        setSuccessMessage(`'Person ${returnedPerson.name}' added successfully`)
+        setSuccessMessage(`'Person: ${returnedPerson.name}' with number: '${returnedPerson.number}'added successfully`)
         setTimeout(() => {
           setSuccessMessage(null)
         }, 5000)
       })
       .catch(error => {
-         setErrorMessage(`Error adding person '${returnedPerson}' `)
+        console.log(error.response.data)
+        setErrorMessage(`Person validation failed: Name: '${nameObject.name}' must be at least 3 characters long, got '${nameObject.name.length}' and number '${nameObject.number}' must be valid format !` )
         setTimeout(() => {
           setErrorMessage(null)
-        }, 5000)
+        }, 8000)
        })
     
 
