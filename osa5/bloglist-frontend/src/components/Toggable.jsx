@@ -3,7 +3,8 @@ import { useState, useImperativeHandle } from 'react'
 const Toggable = (props) => {
   const [visible, setVisible] = useState(false)
 
-  const hideWhenVisible = { display: visible ? 'none' : ' ' }
+  const hideWhenVisible = { display: visible ? 'none' : ' ' } //Toggable-komponentti määrittelee kaksi tyyliobjektia, hideWhenVisible ja showWhenVisible,
+  // jotka määrittävät komponentin näkyvyyden. hideWhenVisible-tyyli piilottaa komponentin, kun visible-tila on true, ja näyttää sen, kun visible-tila on false. showWhenVisible-tyyli tekee päinvastoin: se näyttää komponentin, kun visible-tila on true, ja piilottaa sen, kun visible-tila on false.
   const showWhenVisible = { display: visible ? ' ' : 'none' }
 
   const toggleVisibility = () => {

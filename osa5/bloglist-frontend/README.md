@@ -12,3 +12,12 @@ Currently, two official plugins are available:
 "name": "Root User",
 "password": "secret111"
 }
+
+Edited
+Blog.test.jsx
++2
+-2
+
+Päivitys on tehty: kirjautumattomalle näytetään blogin URL ja tykkäykset ilman nappeja, ja blogilista renderöidään myös ilman kirjautumista. Ajan nyt kohdetestit ja tarkistan lintin.
+
+npm test -- src/components/Blog.test.jsx
