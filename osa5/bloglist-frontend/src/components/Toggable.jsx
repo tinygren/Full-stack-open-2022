@@ -1,4 +1,5 @@
 import { useState, useImperativeHandle } from 'react'
+import { Button, Stack, TextField } from '@mui/material'
 
 const Toggable = (props) => {
   const [visible, setVisible] = useState(false)
@@ -18,11 +19,15 @@ const Toggable = (props) => {
   return (
     <div>
       <div style={hideWhenVisible}>
-        <button onClick={toggleVisibility}>{props.buttonLabel}</button>
+        <Button onClick={toggleVisibility} variant="contained">
+          {props.buttonLabel}
+        </Button>
       </div>
       <div style={showWhenVisible}>
         {props.children}
-        <button onClick={toggleVisibility}>cancel</button>
+        <Button onClick={toggleVisibility} variant="outlined">
+          cancel
+        </Button>
       </div>
     </div>
   )

@@ -12,10 +12,12 @@ test('shows blog details and likes to a logged-out user without buttons', () => 
   }
   render(<Blog blog={blog} />)
 
-  expect(screen.getByText('Title: Test Blog')).toBeInTheDocument()
-  expect(screen.getByText('Author: John Doe')).toBeInTheDocument()
-  expect(screen.getByText('Url: https://example.com')).toBeInTheDocument()
-  expect(screen.getByText('Likes: 5')).toBeInTheDocument()
+  expect(screen.getByText('Test Blog')).toBeInTheDocument()
+  expect(screen.getByText('by John Doe')).toBeInTheDocument()
+  expect(
+    screen.getByRole('link', { name: 'https://example.com' }),
+  ).toHaveAttribute('href', 'https://example.com')
+  expect(screen.getByText('5 likes')).toBeInTheDocument()
 
   expect(screen.queryByRole('button')).not.toBeInTheDocument()
 })
@@ -41,18 +43,22 @@ test('shows url, likes and user when show button is clicked', async () => {
     />,
   )
 
-  expect(screen.queryByText('Url: https://example.com')).not.toBeInTheDocument()
-  expect(screen.queryByText('Likes: 5')).not.toBeInTheDocument()
-  expect(screen.queryByText(user)).not.toBeInTheDocument()
+  expect(
+    screen.queryByRole('link', { name: 'https://example.com' }),
+  ).not.toBeInTheDocument()
+  expect(screen.queryByText('5 likes')).not.toBeInTheDocument()
+  expect(screen.queryByText('Added by test-user')).not.toBeInTheDocument()
 
   // click Show button
   const showButton = screen.getByRole('button', { name: 'Show' })
   await userEvent.click(showButton)
 
   // url, likes and user should be visible after clicking Show
-  expect(screen.getByText('Url: https://example.com')).toBeDefined()
-  expect(screen.getByText('Likes: 5')).toBeDefined()
-  expect(screen.getByText(user)).toBeDefined()
+  expect(
+    screen.getByRole('link', { name: 'https://example.com' }),
+  ).toBeInTheDocument()
+  expect(screen.getByText('5 likes')).toBeInTheDocument()
+  expect(screen.getByText('Added by test-user')).toBeInTheDocument()
 })
 
 test('calls updateBlog twice when like button clicked twice', async () => {
@@ -114,7 +120,7 @@ test('shows only the Like action to a logged-in user who did not create the blog
 
   expect(screen.getByRole('button', { name: 'Like' })).toBeInTheDocument()
   expect(screen.queryByRole('button', { name: 'Remove' })).not.toBeInTheDocument()
-  expect(screen.getByText('Likes: 5')).toBeInTheDocument()
+  expect(screen.getByText('5 likes')).toBeInTheDocument()
 
   await userEvent.click(screen.getByRole('button', { name: 'Like' }))
   expect(updateBlog).toHaveBeenCalledTimes(1)

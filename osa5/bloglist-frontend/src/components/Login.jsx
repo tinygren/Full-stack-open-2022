@@ -1,5 +1,20 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import styled from 'styled-components'
+
+const Button = styled.button`
+  background: Bisque;
+  font-size: 1em;
+  margin: 1em;
+  padding: 0.25em 1em;
+  border: 2px solid Chocolate;
+  border-radius: 3px;
+`
+
+const Input = styled.input`
+  margin: 0.25em;
+  width: 300px;
+`
 
 const Login = ({ handleLogin }) => {
   const [localUsername, setLocalUsername] = useState('')
@@ -24,7 +39,7 @@ const Login = ({ handleLogin }) => {
       <form onSubmit={handleSubmit}>
         <div>
           username
-          <input
+          <Input
             type="text"
             value={localUsername}
             name="Username"
@@ -33,14 +48,14 @@ const Login = ({ handleLogin }) => {
         </div>
         <div>
           password
-          <input
+          <Input
             type="password"
             value={localPassword}
             name="Password"
             onChange={({ target }) => setLocalPassword(target.value)}
           />
         </div>
-        <button type="submit">login</button>
+        <Button type="submit">login</Button>
       </form>
     </div>
   )

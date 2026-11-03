@@ -1,39 +1,44 @@
+import { Button, Stack, TextField } from '@mui/material'
+
 const New_Blog = ({ addBlog }) => {
-  const blogStyle = {
-    border: '1px solid #ccc',
-    padding: '10px',
-    margin: '10px 0',
-  }
   return (
-    <div style={blogStyle}>
+    <div>
       <h2>Create new</h2>
       <form
         onSubmit={(e) => {
           e.preventDefault()
           const title = e.target.title.value
-          console.log('title:', title)
           const author = e.target.author.value
-          console.log('author:', author)
           const url = e.target.url.value
-          console.log('url:', url)
-          const likes = parseInt(e.target.likes.value)
-          console.log('likes:', likes)
-          addBlog({ title, author, url, likes })
+          addBlog({ title, author, url, likes: 0 })
         }}
       >
-        <div>
-          Title: <input type="text" name="title" />
-        </div>
-        <div>
-          Author: <input type="text" name="author" />
-        </div>
-        <div>
-          URL: <input type="text" name="url" />
-        </div>
-        <div>
-          Likes: <input type="number" name="likes" />
-        </div>
-        <button type="submit">Create</button>
+        <Stack spacing={1.5} alignItems="flex-start" sx={{ maxWidth: 360 }}>
+          <TextField
+            name="title"
+            placeholder="title"
+            aria-label="title"
+            required
+            fullWidth
+          />
+          <TextField
+            name="author"
+            placeholder="author"
+            aria-label="author"
+            required
+            fullWidth
+          />
+          <TextField
+            name="url"
+            placeholder="url"
+            aria-label="url"
+            required
+            fullWidth
+          />
+          <Button type="submit" variant="contained">
+            Create
+          </Button>
+        </Stack>
       </form>
     </div>
   )

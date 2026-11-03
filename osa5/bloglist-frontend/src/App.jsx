@@ -1,5 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link as RouterLink,
+} from 'react-router-dom'
+import { AppBar, Button, Container, Toolbar, Typography } from '@mui/material'
+
 import Footer from './components/Footer'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
@@ -100,7 +107,17 @@ const App = () => {
     //  päivitetään blogs-tilaa siten, että vanhan blogin tilalle asetetaan päivitetty blogi.
     try {
       const returnedBlog = await blogService.update(id, updatedBlog)
-      setBlogs(blogs.map((blog) => (blog.id === id ? returnedBlog : blog)))
+      setBlogs((currentBlogs) =>
+        currentBlogs.map((blog) =>
+          blog.id === id
+            ? {
+              ...blog,
+              ...returnedBlog,
+              user: returnedBlog.user ?? blog.user,
+            }
+            : blog,
+        ),
+      )
       setErrorMessage(`Blog ${updatedBlog.title} Likes updated successfully`)
     } catch {
       setErrorMessage('Failed to update blog')
@@ -115,112 +132,82 @@ const App = () => {
     await blogService.remove(id)
     setBlogs(blogs.filter((blog) => blog.id !== id))
   }
-  const padding = {
-    padding: 5,
-  }
-
-  const blogForm = () => (
-    <div>
-      Log in to application...
-      <button
-        type="button"
-        onClick={() => {
-          window.localStorage.removeItem('loggedBlogappUser')
-          setUser(null)
-        }}
-      >
-        logout
-      </button>
-    </div>
-  )
-
   return (
-    <Router>
-      <div>
-        <Link style={padding} to="/blogs">
-          blogs
-        </Link>
-        <Link style={padding} to="/new_blog">
-          new blog
-        </Link>
-        {user ? (
-          blogForm()
-        ) : (
-          <Link style={padding} to="/login">
-            login
-          </Link>
-        )}
-      </div>
-      <div>
-        <Notification message={errorMessage} />
-        <Routes>
-          <Route
-            path="/blogs"
-            element={
-              <Blogs
-                blogs={blogs}
-                user={user}
-                updateBlog={updateBlog}
-                removeBlogId={removeBlogId}
-              />
-            }
-          />
-          <Route
-            path="/new_blog"
-            element={
-              <Toggable buttonLabel="create new blog" ref={blogFormRef}>
-                <New_Blog addBlog={addBlog} />
-              </Toggable>
-            }
-          />
-          <Route
-            path="/login"
-            element={
-              <Toggable buttonLabel="log in" ref={blogFormRef}>
-                <Login handleLogin={handleLogin} />
-              </Toggable>
-            }
-          />
-          <Route
-            path="/"
-            element={
-              <Blogs
-                blogs={blogs}
-                user={user}
-                updateBlog={updateBlog}
-                removeBlogId={removeBlogId}
-              />
-            }
-          />
-        </Routes>
+    <Container>
+      <Router>
+        <div>
+          <AppBar position="static" sx={{ mb: 2 }}>
+            <Toolbar>
+              <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                Blog App
+              </Typography>
+              <Button color="inherit" component={RouterLink} to="/blogs">
+                Blogs
+              </Button>
+              <Button color="inherit" component={RouterLink} to="/new_blog">
+                New Blog
+              </Button>
+              {user ? (
+                <Button
+                  color="inherit"
+                  onClick={() => {
+                    window.localStorage.removeItem('loggedBlogappUser')
+                    setUser(null)
+                  }}
+                >
+                  Logout
+                </Button>
+              ) : (
+                <Button color="inherit" component={RouterLink} to="/login">
+                  Login
+                </Button>
+              )}
+            </Toolbar>
+          </AppBar>
+        </div>
+        <div>
+          <Notification message={errorMessage} />
+          <Routes>
+            <Route
+              path="/blogs"
+              element={
+                <Blogs
+                  blogs={blogs}
+                  user={user}
+                  updateBlog={updateBlog}
+                  removeBlogId={removeBlogId}
+                />
+              }
+            />
+            <Route
+              path="/new_blog"
+              element={
+                <Toggable buttonLabel="create" ref={blogFormRef}>
+                  <New_Blog addBlog={addBlog} />
+                </Toggable>
+              }
+            />
+            <Route
+              path="/login"
+              element={<LoginForm handleLogin={handleLogin} />}
+            />
+            <Route
+              path="/"
+              element={
+                <Blogs
+                  blogs={blogs}
+                  user={user}
+                  updateBlog={updateBlog}
+                  removeBlogId={removeBlogId}
+                />
+              }
+            />
+          </Routes>
 
-        {/* {user && blogForm()}
-        {/* {!user && loginForm()} */}
-        {/*<Toggable buttonLabel="new blog">{addNewBlogForm()}</Toggable> */}
-        {/* <Toggable buttonLabel="log in" ref={blogFormRef}>
-          <LoginForm handleLogin={handleLogin} />
-        </Toggable>
-        <Toggable buttonLabel="create new blog" ref={blogFormRef}>
-          <BlogForm addBlog={addBlog} />
-        </Toggable> */}
-        {/*user && addNewBlogForm()*/}
-        {/* {user && (
-          <div>
-            <h2>Blogs:</h2>
-            {blogs.map((blog) => (
-              <Blog
-                key={blog.id}
-                blog={blog}
-                updateBlog={updateBlog}
-                user={user.name}
-                removeBlogId={removeBlogId}
-              />
-            ))}
-          </div>
-        )} */}
-        <Footer />
-      </div>
-    </Router>
+          <Footer />
+        </div>
+      </Router>
+    </Container>
   )
 }
 
