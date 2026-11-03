@@ -7,7 +7,8 @@
     "start": "cross-env NODE_ENV=production node index.js",
     "dev": "cross-env NODE_ENV=development node --watch index.js",
     "test": "cross-env  NODE_ENV=test node --test",
-    "mongo": "node mongo.js"
+    "mongo": "node mongo.js",
+    "start:test": "cross-env NODE_ENV=test node --watch index.js"
   },
   "keywords": [],
   "author": "",
