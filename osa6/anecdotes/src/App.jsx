@@ -3,6 +3,17 @@ import { useAnecdotes, useAnecdoteActions } from "./store";
 const App = () => {
   const anecdotes = useAnecdotes();
   const { vote } = useAnecdoteActions(); // Destructuring the vote function from the actions object
+  const { addAnecdote } = useAnecdoteActions(); // Destructuring the addAnecdote function from the actions object
+
+  const add = (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const input = form.elements.namedItem("new"); // Accessing the input element by its name attribute
+    const content = input.value;
+    console.log("new anecdote", content);
+    addAnecdote(content);
+    input.value = "";
+  };
 
   return (
     <div>
@@ -17,11 +28,11 @@ const App = () => {
         </div>
       ))}
       <h2>create new</h2>
-      <form>
+      <form onSubmit={add}>
         <div>
-          <input data-testid="new" />
+          <input name="new" data-testid="new" />
         </div>
-        <button>create</button>
+        <button type="submit">create</button>
       </form>
     </div>
   );
